@@ -1,0 +1,134 @@
+-- FactCheck AI Database Schema
+
+DROP TABLE IF EXISTS alerts CASCADE;
+DROP TABLE IF EXISTS ai_analyses CASCADE;
+DROP TABLE IF EXISTS fact_checks CASCADE;
+DROP TABLE IF EXISTS claims CASCADE;
+DROP TABLE IF EXISTS sources CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
+DROP TABLE IF EXISTS trending_topics CASCADE;
+DROP TABLE IF EXISTS team_members CASCADE;
+DROP TABLE IF EXISTS reports CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  role VARCHAR(50) DEFAULT 'fact_checker',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE categories (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  color VARCHAR(7) DEFAULT '#3B82F6',
+  claim_count INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE sources (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  url VARCHAR(500),
+  credibility_score DECIMAL(3,1) DEFAULT 5.0,
+  type VARCHAR(50),
+  description TEXT,
+  total_claims INTEGER DEFAULT 0,
+  verified_claims INTEGER DEFAULT 0,
+  false_claims INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE claims (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(500) NOT NULL,
+  content TEXT NOT NULL,
+  source_id INTEGER REFERENCES sources(id) ON DELETE SET NULL,
+  category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
+  status VARCHAR(50) DEFAULT 'pending',
+  priority VARCHAR(20) DEFAULT 'medium',
+  urgency_score DECIMAL(3,1) DEFAULT 5.0,
+  spread_rate INTEGER DEFAULT 0,
+  reach INTEGER DEFAULT 0,
+  origin_url VARCHAR(500),
+  assigned_to VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE fact_checks (
+  id SERIAL PRIMARY KEY,
+  claim_id INTEGER REFERENCES claims(id) ON DELETE CASCADE,
+  verdict VARCHAR(50) NOT NULL,
+  summary TEXT NOT NULL,
+  evidence TEXT,
+  sources_used TEXT,
+  checker_name VARCHAR(255),
+  confidence_score DECIMAL(3,1) DEFAULT 0.0,
+  methodology TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE ai_analyses (
+  id SERIAL PRIMARY KEY,
+  claim_id INTEGER REFERENCES claims(id) ON DELETE SET NULL,
+  analysis_type VARCHAR(50) NOT NULL,
+  input_text TEXT NOT NULL,
+  result JSONB NOT NULL,
+  model_used VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE trending_topics (
+  id SERIAL PRIMARY KEY,
+  topic VARCHAR(255) NOT NULL,
+  description TEXT,
+  mention_count INTEGER DEFAULT 0,
+  growth_rate DECIMAL(5,1) DEFAULT 0.0,
+  risk_level VARCHAR(20) DEFAULT 'low',
+  category VARCHAR(100),
+  first_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE team_members (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  role VARCHAR(100) NOT NULL,
+  specialization VARCHAR(255),
+  claims_reviewed INTEGER DEFAULT 0,
+  accuracy_rate DECIMAL(5,2) DEFAULT 0.0,
+  status VARCHAR(20) DEFAULT 'active',
+  avatar_url VARCHAR(500),
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE reports (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(500) NOT NULL,
+  description TEXT,
+  type VARCHAR(50) NOT NULL,
+  status VARCHAR(50) DEFAULT 'draft',
+  author VARCHAR(255),
+  data JSONB,
+  published_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE alerts (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(500) NOT NULL,
+  description TEXT,
+  severity VARCHAR(20) DEFAULT 'medium',
+  type VARCHAR(50) NOT NULL,
+  source VARCHAR(255),
+  status VARCHAR(20) DEFAULT 'active',
+  claim_id INTEGER REFERENCES claims(id) ON DELETE SET NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
