@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import DetailModal from '../components/DetailModal';
 import FormModal from '../components/FormModal';
+import Pagination from '../components/Pagination';
 
 export default function Claims() {
   const [items, setItems] = useState([]);
@@ -10,12 +11,21 @@ export default function Claims() {
   const [editItem, setEditItem] = useState(null);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [page]);
 
   const load = async () => {
-    const res = await api.get('/claims');
-    setItems(res.data);
+    const res = await api.get(`/claims?page=${page}&limit=20`);
+    if (res.data && Array.isArray(res.data.data)) {
+      setItems(res.data.data);
+      setTotalPages(res.data.pagination?.totalPages || 1);
+      setTotal(res.data.pagination?.total || res.data.data.length);
+    } else {
+      setItems(Array.isArray(res.data) ? res.data : []);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -110,6 +120,7 @@ export default function Claims() {
       </div>
 
       <div className="data-table-container">
+        <div style={{ padding: '8px 12px', fontSize: 12, color: '#94a3b8' }}>{total ? `${total} total` : `${items.length} items`}</div>
         <table className="data-table">
           <thead>
             <tr>
@@ -143,6 +154,7 @@ export default function Claims() {
           </tbody>
         </table>
       </div>
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
       {selected && (
         <DetailModal title="Claim Details" item={selected} fields={detailFields} onClose={() => setSelected(null)} onEdit={handleEdit} onDelete={handleDelete} />

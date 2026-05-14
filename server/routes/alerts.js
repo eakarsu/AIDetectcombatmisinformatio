@@ -5,13 +5,25 @@ const router = express.Router();
 
 router.get('/', auth, async (req, res) => {
   try {
+    const orderClause = `ORDER BY CASE a.severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 WHEN 'low' THEN 4 END, a.created_at DESC`;
+
+    if (req.query.page !== undefined) {
+      const page = Math.max(1, parseInt(req.query.page) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
+      const offset = (page - 1) * limit;
+      const [result, countResult] = await Promise.all([
+        pool.query(`SELECT a.*, c.title as claim_title FROM alerts a LEFT JOIN claims c ON a.claim_id = c.id ${orderClause} LIMIT $1 OFFSET $2`, [limit, offset]),
+        pool.query('SELECT COUNT(*) as total FROM alerts'),
+      ]);
+      const total = parseInt(countResult.rows[0].total);
+      return res.json({ data: result.rows, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
+    }
+
     const result = await pool.query(`
       SELECT a.*, c.title as claim_title
       FROM alerts a
       LEFT JOIN claims c ON a.claim_id = c.id
-      ORDER BY
-        CASE a.severity WHEN 'critical' THEN 1 WHEN 'high' THEN 2 WHEN 'medium' THEN 3 WHEN 'low' THEN 4 END,
-        a.created_at DESC
+      ${orderClause}
     `);
     res.json(result.rows);
   } catch (err) {

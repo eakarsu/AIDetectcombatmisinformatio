@@ -11,7 +11,11 @@ export default function FactChecks() {
   const [search, setSearch] = useState('');
 
   useEffect(() => { load(); }, []);
-  const load = async () => { const res = await api.get('/factchecks'); setItems(res.data); };
+  const load = async () => {
+    const res = await api.get('/factchecks?page=1&limit=100');
+    const rows = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+    setItems(rows);
+  };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this fact check?')) return;

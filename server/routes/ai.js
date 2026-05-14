@@ -1,6 +1,7 @@
 const express = require('express');
 const pool = require('../db');
 const auth = require('../middleware/auth');
+const { aiRateLimiter } = require('../middleware/rateLimiter');
 const { analyzeClaim, analyzeSourceCredibility, analyzeSentiment, generateFactCheckSummary, detectMisinformationPatterns } = require('../services/openrouter');
 const router = express.Router();
 
@@ -45,7 +46,7 @@ router.delete('/analyses/:id', auth, async (req, res) => {
 });
 
 // Analyze a claim
-router.post('/analyze-claim', auth, async (req, res) => {
+router.post('/analyze-claim', auth, aiRateLimiter, async (req, res) => {
   try {
     const { text, claim_id } = req.body;
     if (!text) return res.status(400).json({ error: 'Text is required' });
@@ -61,7 +62,7 @@ router.post('/analyze-claim', auth, async (req, res) => {
 });
 
 // Analyze source credibility
-router.post('/analyze-source', auth, async (req, res) => {
+router.post('/analyze-source', auth, aiRateLimiter, async (req, res) => {
   try {
     const { name, url, description } = req.body;
     if (!name) return res.status(400).json({ error: 'Source name is required' });
@@ -77,7 +78,7 @@ router.post('/analyze-source', auth, async (req, res) => {
 });
 
 // Sentiment analysis
-router.post('/analyze-sentiment', auth, async (req, res) => {
+router.post('/analyze-sentiment', auth, aiRateLimiter, async (req, res) => {
   try {
     const { text, claim_id } = req.body;
     if (!text) return res.status(400).json({ error: 'Text is required' });
@@ -93,7 +94,7 @@ router.post('/analyze-sentiment', auth, async (req, res) => {
 });
 
 // Generate fact-check summary
-router.post('/generate-summary', auth, async (req, res) => {
+router.post('/generate-summary', auth, aiRateLimiter, async (req, res) => {
   try {
     const { claim, evidence, claim_id } = req.body;
     if (!claim) return res.status(400).json({ error: 'Claim is required' });
@@ -109,7 +110,7 @@ router.post('/generate-summary', auth, async (req, res) => {
 });
 
 // Detect misinformation patterns
-router.post('/detect-patterns', auth, async (req, res) => {
+router.post('/detect-patterns', auth, aiRateLimiter, async (req, res) => {
   try {
     const { text, claim_id } = req.body;
     if (!text) return res.status(400).json({ error: 'Text is required' });

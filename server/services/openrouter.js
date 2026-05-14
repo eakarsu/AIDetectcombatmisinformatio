@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const { parseAIJson } = require('./parseAIJson');
 require('dotenv').config({ path: '../../.env' });
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
@@ -13,7 +14,7 @@ async function callOpenRouter(messages, options = {}) {
       'X-Title': 'FactCheck AI',
     },
     body: JSON.stringify({
-      model: process.env.OPENROUTER_MODEL || 'anthropic/claude-haiku-4.5',
+      model: process.env.OPENROUTER_MODEL || 'anthropic/claude-3-5-sonnet-20241022',
       messages,
       temperature: options.temperature || 0.3,
       max_tokens: options.max_tokens || 1024,
@@ -49,11 +50,7 @@ async function analyzeClaim(claimText) {
     }
   ];
   const result = await callOpenRouter(messages);
-  try {
-    return JSON.parse(result);
-  } catch {
-    return { raw_response: result };
-  }
+  return parseAIJson(result);
 }
 
 async function analyzeSourceCredibility(sourceName, sourceUrl, description) {
@@ -74,11 +71,7 @@ async function analyzeSourceCredibility(sourceName, sourceUrl, description) {
     }
   ];
   const result = await callOpenRouter(messages);
-  try {
-    return JSON.parse(result);
-  } catch {
-    return { raw_response: result };
-  }
+  return parseAIJson(result);
 }
 
 async function analyzeSentiment(text) {
@@ -100,11 +93,7 @@ async function analyzeSentiment(text) {
     }
   ];
   const result = await callOpenRouter(messages);
-  try {
-    return JSON.parse(result);
-  } catch {
-    return { raw_response: result };
-  }
+  return parseAIJson(result);
 }
 
 async function generateFactCheckSummary(claim, evidence) {
@@ -125,11 +114,7 @@ async function generateFactCheckSummary(claim, evidence) {
     }
   ];
   const result = await callOpenRouter(messages);
-  try {
-    return JSON.parse(result);
-  } catch {
-    return { raw_response: result };
-  }
+  return parseAIJson(result);
 }
 
 async function detectMisinformationPatterns(text) {
@@ -151,11 +136,7 @@ async function detectMisinformationPatterns(text) {
     }
   ];
   const result = await callOpenRouter(messages);
-  try {
-    return JSON.parse(result);
-  } catch {
-    return { raw_response: result };
-  }
+  return parseAIJson(result);
 }
 
 module.exports = {

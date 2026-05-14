@@ -17,6 +17,27 @@ import AISentiment from './pages/AISentiment';
 import AISourceChecker from './pages/AISourceChecker';
 import AIPatternDetector from './pages/AIPatternDetector';
 import AISummaryGenerator from './pages/AISummaryGenerator';
+import AIAutoCategorize from './pages/AIAutoCategorize';
+import AITrendPrediction from './pages/AITrendPrediction';
+import AISourceTrace from './pages/AISourceTrace';
+import AIPersonalizedDebunk from './pages/AIPersonalizedDebunk';
+import AIIntegrations from './pages/AIIntegrations';
+import AIRealtimeMonitor from './pages/AIRealtimeMonitor';
+
+// // === Batch 02 Gaps & Frontend Mounts ===
+import CfViralMisinformationEarlyWarning from './pages/CfViralMisinformationEarlyWarning';
+import CfMisinformationSourceTracing from './pages/CfMisinformationSourceTracing';
+import CfPredictiveClaimVerification from './pages/CfPredictiveClaimVerification';
+import CfDebunkingPersonalization from './pages/CfDebunkingPersonalization';
+import CfFactCheckSeoOptimization from './pages/CfFactCheckSeoOptimization';
+import GapTrendingCategoriesLackAiEndpointsForTrendPredictionA from './pages/GapTrendingCategoriesLackAiEndpointsForTrendPredictionA';
+import GapSourcesLacksAiCredibilityScoringEndpoint from './pages/GapSourcesLacksAiCredibilityScoringEndpoint';
+import GapLimitedSocialPlatformIntegrationNoTwitterFacebookTikt from './pages/GapLimitedSocialPlatformIntegrationNoTwitterFacebookTikt';
+import GapNoRealTimeSpreadMonitoringEngine from './pages/GapNoRealTimeSpreadMonitoringEngine';
+import GapLimitedFactCheckNetworkIntegrationSnopesFactcheck from './pages/GapLimitedFactCheckNetworkIntegrationSnopesFactcheck';
+import GapNoVerdictExplainabilitySurface from './pages/GapNoVerdictExplainabilitySurface';
+import GapNoWebhooks from './pages/GapNoWebhooks';
+import GapNoNotificationsSystem from './pages/GapNoNotificationsSystem';
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token');
@@ -49,6 +70,12 @@ function Sidebar() {
       { path: '/ai/source-checker', icon: '🔍', label: 'Source Checker' },
       { path: '/ai/pattern-detector', icon: '🧩', label: 'Pattern Detector' },
       { path: '/ai/summary-generator', icon: '📝', label: 'Summary Generator' },
+      { path: '/ai/auto-categorize', icon: '🏷️', label: 'Auto-Categorize' },
+      { path: '/ai/trend-prediction', icon: '📈', label: 'Trend Prediction' },
+      { path: '/ai/source-trace', icon: '🕸️', label: 'Source Tracing' },
+      { path: '/ai/personalized-debunk', icon: '🎯', label: 'Personalized Debunk' },
+      { path: '/ai/realtime-monitor', icon: '📡', label: 'Real-Time Monitor' },
+      { path: '/ai/integrations', icon: '🔌', label: 'Integrations' },
     ]},
     { section: 'Organization', items: [
       { path: '/team', icon: '👥', label: 'Team' },
@@ -130,7 +157,28 @@ function App() {
         <Route path="/ai/source-checker" element={<ProtectedRoute><AppLayout><AISourceChecker /></AppLayout></ProtectedRoute>} />
         <Route path="/ai/pattern-detector" element={<ProtectedRoute><AppLayout><AIPatternDetector /></AppLayout></ProtectedRoute>} />
         <Route path="/ai/summary-generator" element={<ProtectedRoute><AppLayout><AISummaryGenerator /></AppLayout></ProtectedRoute>} />
+        <Route path="/ai/auto-categorize" element={<ProtectedRoute><AppLayout><AIAutoCategorize /></AppLayout></ProtectedRoute>} />
+        <Route path="/ai/trend-prediction" element={<ProtectedRoute><AppLayout><AITrendPrediction /></AppLayout></ProtectedRoute>} />
+        <Route path="/ai/source-trace" element={<ProtectedRoute><AppLayout><AISourceTrace /></AppLayout></ProtectedRoute>} />
+        <Route path="/ai/personalized-debunk" element={<ProtectedRoute><AppLayout><AIPersonalizedDebunk /></AppLayout></ProtectedRoute>} />
+        <Route path="/ai/realtime-monitor" element={<ProtectedRoute><AppLayout><AIRealtimeMonitor /></AppLayout></ProtectedRoute>} />
+        <Route path="/ai/integrations" element={<ProtectedRoute><AppLayout><AIIntegrations /></AppLayout></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/dashboard" />} />
+      
+        {/* // === Batch 02 Gaps & Frontend Mounts === */}
+        <Route path="/cf/viral-misinformation-early-warning" element={<CfViralMisinformationEarlyWarning />} />
+        <Route path="/cf/misinformation-source-tracing" element={<CfMisinformationSourceTracing />} />
+        <Route path="/cf/predictive-claim-verification" element={<CfPredictiveClaimVerification />} />
+        <Route path="/cf/debunking-personalization" element={<CfDebunkingPersonalization />} />
+        <Route path="/cf/fact-check-seo-optimization" element={<CfFactCheckSeoOptimization />} />
+        <Route path="/gap/trending-categories-lack-ai-endpoints-for-trend-prediction-a" element={<GapTrendingCategoriesLackAiEndpointsForTrendPredictionA />} />
+        <Route path="/gap/sources-lacks-ai-credibility-scoring-endpoint" element={<GapSourcesLacksAiCredibilityScoringEndpoint />} />
+        <Route path="/gap/limited-social-platform-integration-no-twitter-facebook-tikt" element={<GapLimitedSocialPlatformIntegrationNoTwitterFacebookTikt />} />
+        <Route path="/gap/no-real-time-spread-monitoring-engine" element={<GapNoRealTimeSpreadMonitoringEngine />} />
+        <Route path="/gap/limited-fact-check-network-integration-snopes-factcheck" element={<GapLimitedFactCheckNetworkIntegrationSnopesFactcheck />} />
+        <Route path="/gap/no-verdict-explainability-surface" element={<GapNoVerdictExplainabilitySurface />} />
+        <Route path="/gap/no-webhooks" element={<GapNoWebhooks />} />
+        <Route path="/gap/no-notifications-system" element={<GapNoNotificationsSystem />} />
       </Routes>
     </BrowserRouter>
   );

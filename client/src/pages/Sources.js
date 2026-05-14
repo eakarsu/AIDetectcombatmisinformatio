@@ -11,7 +11,11 @@ export default function Sources() {
   const [search, setSearch] = useState('');
 
   useEffect(() => { load(); }, []);
-  const load = async () => { const res = await api.get('/sources'); setItems(res.data); };
+  const load = async () => {
+    const res = await api.get('/sources?page=1&limit=100');
+    const rows = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+    setItems(rows);
+  };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this source?')) return;

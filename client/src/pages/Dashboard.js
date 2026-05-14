@@ -16,12 +16,15 @@ export default function Dashboard() {
     try {
       const [statsRes, claimsRes, alertsRes] = await Promise.all([
         api.get('/ai/dashboard-stats'),
-        api.get('/claims'),
+        api.get('/claims?page=1&limit=20'),
         api.get('/alerts'),
       ]);
       setStats(statsRes.data);
-      setRecentClaims(claimsRes.data.slice(0, 5));
-      setActiveAlerts(alertsRes.data.filter(a => a.status === 'active').slice(0, 5));
+      // Handle both legacy array and paginated {data, pagination} responses
+      const claimRows = Array.isArray(claimsRes.data) ? claimsRes.data : (claimsRes.data?.data || []);
+      const alertRows = Array.isArray(alertsRes.data) ? alertsRes.data : (alertsRes.data?.data || []);
+      setRecentClaims(claimRows.slice(0, 5));
+      setActiveAlerts(alertRows.filter(a => a.status === 'active').slice(0, 5));
     } catch (err) {
       console.error(err);
     }

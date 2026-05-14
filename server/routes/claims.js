@@ -5,14 +5,27 @@ const router = express.Router();
 
 router.get('/', auth, async (req, res) => {
   try {
-    const result = await pool.query(`
-      SELECT c.*, s.name as source_name, cat.name as category_name
-      FROM claims c
-      LEFT JOIN sources s ON c.source_id = s.id
-      LEFT JOIN categories cat ON c.category_id = cat.id
-      ORDER BY c.urgency_score DESC, c.created_at DESC
-    `);
-    res.json(result.rows);
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
+    const offset = (page - 1) * limit;
+
+    const [result, countResult] = await Promise.all([
+      pool.query(`
+        SELECT c.*, s.name as source_name, cat.name as category_name
+        FROM claims c
+        LEFT JOIN sources s ON c.source_id = s.id
+        LEFT JOIN categories cat ON c.category_id = cat.id
+        ORDER BY c.urgency_score DESC, c.created_at DESC
+        LIMIT $1 OFFSET $2
+      `, [limit, offset]),
+      pool.query('SELECT COUNT(*) as total FROM claims'),
+    ]);
+
+    const total = parseInt(countResult.rows[0].total);
+    res.json({
+      data: result.rows,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -36,7 +49,17 @@ router.get('/:id', auth, async (req, res) => {
 
 router.post('/', auth, async (req, res) => {
   try {
-    const { title, content, source_id, category_id, priority, urgency_score, origin_url, assigned_to } = req.body;
+    let { title, content, source_id, category_id, priority, urgency_score, origin_url, assigned_to } = req.body;
+
+    if (!title || typeof title !== 'string' || title.trim().length === 0) {
+      return res.status(400).json({ error: 'title is required' });
+    }
+    if (!content || typeof content !== 'string' || content.trim().length === 0) {
+      return res.status(400).json({ error: 'content is required' });
+    }
+    title = title.trim().slice(0, 500);
+    content = content.trim().slice(0, 10000);
+
     const result = await pool.query(
       `INSERT INTO claims (title, content, source_id, category_id, priority, urgency_score, origin_url, assigned_to)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,

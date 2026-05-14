@@ -5,6 +5,18 @@ const router = express.Router();
 
 router.get('/', auth, async (req, res) => {
   try {
+    if (req.query.page !== undefined) {
+      const page = Math.max(1, parseInt(req.query.page) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
+      const offset = (page - 1) * limit;
+      const [result, countResult] = await Promise.all([
+        pool.query('SELECT * FROM trending_topics ORDER BY mention_count DESC LIMIT $1 OFFSET $2', [limit, offset]),
+        pool.query('SELECT COUNT(*) as total FROM trending_topics'),
+      ]);
+      const total = parseInt(countResult.rows[0].total);
+      return res.json({ data: result.rows, pagination: { page, limit, total, totalPages: Math.ceil(total / limit) } });
+    }
+
     const result = await pool.query('SELECT * FROM trending_topics ORDER BY mention_count DESC');
     res.json(result.rows);
   } catch (err) {
