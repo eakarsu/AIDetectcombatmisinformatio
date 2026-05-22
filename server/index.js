@@ -54,6 +54,7 @@ app.use('/api/ai', require('./routes/sourceTracing'));
 app.use('/api/ai', require('./routes/viralEarlyWarn'));
 // Public widget API (rate-limited, no auth) for embedding fact-check verdicts
 app.use('/api/public', require('./routes/publicWidget'));
+app.use('/api/narrative-cluster-attribution', require('./routes/narrativeClusterAttribution'));
 
 // Health check
 app.get('/api/health', (req, res) => {

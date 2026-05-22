@@ -23,6 +23,7 @@ import AISourceTrace from './pages/AISourceTrace';
 import AIPersonalizedDebunk from './pages/AIPersonalizedDebunk';
 import AIIntegrations from './pages/AIIntegrations';
 import AIRealtimeMonitor from './pages/AIRealtimeMonitor';
+import NarrativeClusterAttribution from './pages/NarrativeClusterAttribution';
 
 // // === Batch 02 Gaps & Frontend Mounts ===
 import CfViralMisinformationEarlyWarning from './pages/CfViralMisinformationEarlyWarning';
@@ -38,6 +39,11 @@ import GapLimitedFactCheckNetworkIntegrationSnopesFactcheck from './pages/GapLim
 import GapNoVerdictExplainabilitySurface from './pages/GapNoVerdictExplainabilitySurface';
 import GapNoWebhooks from './pages/GapNoWebhooks';
 import GapNoNotificationsSystem from './pages/GapNoNotificationsSystem';
+
+import CodexCustomVizFeature from './pages/CodexCustomVizFeature';
+import CodexOperationsFeature from './pages/CodexOperationsFeature';
+
+import TimelineView from './pages/TimelineView';
 
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem('token');
@@ -60,9 +66,10 @@ function Sidebar() {
       { path: '/sources', icon: '🔗', label: 'Sources' },
       { path: '/categories', icon: '🏷️', label: 'Categories' },
     ]},
-    { section: 'Monitoring', items: [
+      { section: 'Monitoring', items: [
       { path: '/trending', icon: '📈', label: 'Trending Topics' },
       { path: '/alerts', icon: '🚨', label: 'Alerts' },
+      { path: '/narrative-cluster-attribution', icon: '🧭', label: 'Narrative Clusters' },
     ]},
     { section: 'AI Tools', items: [
       { path: '/ai/claim-analyzer', icon: '🤖', label: 'Claim Analyzer' },
@@ -142,6 +149,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/insights/timeline" element={<ProtectedRoute><TimelineView /></ProtectedRoute>} />
+        <Route path="/codex/custom-viz" element={<ProtectedRoute><CodexCustomVizFeature /></ProtectedRoute>} />
+        <Route path="/codex/operations" element={<ProtectedRoute><CodexOperationsFeature /></ProtectedRoute>} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>} />
         <Route path="/claims" element={<ProtectedRoute><AppLayout><Claims /></AppLayout></ProtectedRoute>} />
@@ -152,6 +163,7 @@ function App() {
         <Route path="/team" element={<ProtectedRoute><AppLayout><Team /></AppLayout></ProtectedRoute>} />
         <Route path="/reports" element={<ProtectedRoute><AppLayout><Reports /></AppLayout></ProtectedRoute>} />
         <Route path="/alerts" element={<ProtectedRoute><AppLayout><Alerts /></AppLayout></ProtectedRoute>} />
+        <Route path="/narrative-cluster-attribution" element={<ProtectedRoute><AppLayout><NarrativeClusterAttribution /></AppLayout></ProtectedRoute>} />
         <Route path="/ai/claim-analyzer" element={<ProtectedRoute><AppLayout><AIClaimAnalyzer /></AppLayout></ProtectedRoute>} />
         <Route path="/ai/sentiment" element={<ProtectedRoute><AppLayout><AISentiment /></AppLayout></ProtectedRoute>} />
         <Route path="/ai/source-checker" element={<ProtectedRoute><AppLayout><AISourceChecker /></AppLayout></ProtectedRoute>} />
