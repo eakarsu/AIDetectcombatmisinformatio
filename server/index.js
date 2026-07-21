@@ -5,6 +5,8 @@ require('dotenv').config({ path: '../.env' });
 
 const app = express();
 const PORT = process.env.BACKEND_PORT || 4000;
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) throw new Error('JWT_SECRET must be configured with at least 32 characters');
+if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is required');
 
 // Security middleware
 app.use(helmet({
@@ -55,35 +57,14 @@ app.use('/api/ai', require('./routes/viralEarlyWarn'));
 // Public widget API (rate-limited, no auth) for embedding fact-check verdicts
 app.use('/api/public', require('./routes/publicWidget'));
 app.use('/api/narrative-cluster-attribution', require('./routes/narrativeClusterAttribution'));
+app.use('/api/evidence-cases', require('./routes/evidenceCases'));
 
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-trending-categories-lack-ai-endpoints-for-trend-prediction-a', require('./routes/gap_trending_categories_lack_ai_endpoints_for_trend_prediction_a'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-sources-lacks-ai-credibility-scoring-endpoint', require('./routes/gap_sources_lacks_ai_credibility_scoring_endpoint'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-limited-social-platform-integration-no-twitter-facebook-tikt', require('./routes/gap_limited_social_platform_integration_no_twitter_facebook_tikt'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-no-real-time-spread-monitoring-engine', require('./routes/gap_no_real_time_spread_monitoring_engine'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-limited-fact-check-network-integration-snopes-factcheck', require('./routes/gap_limited_fact_check_network_integration_snopes_factcheck'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-no-verdict-explainability-surface', require('./routes/gap_no_verdict_explainability_surface'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-no-webhooks', require('./routes/gap_no_webhooks'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-no-notifications-system', require('./routes/gap_no_notifications_system'));
+// Generated gap routers are quarantined until their providers have real contracts.
 
 app.listen(PORT, () => {
   console.log(`🚀 FactCheck AI Server running on port ${PORT}`);
