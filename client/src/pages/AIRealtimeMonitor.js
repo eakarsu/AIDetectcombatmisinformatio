@@ -28,7 +28,6 @@ export default function AIRealtimeMonitor() {
       return () => clearInterval(timerRef.current);
     }
     return undefined;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running]);
 
   return (

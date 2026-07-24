@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../db');
+const auth = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/login', async (req, res) => {
@@ -42,6 +43,16 @@ router.post('/register', async (req, res) => {
       { expiresIn: '24h' }
     );
     res.status(201).json({ token, user });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/me', auth, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id,email,name,role,tenant_id FROM users WHERE id=$1', [req.user.id]);
+    if (!result.rows[0]) return res.status(404).json({ error: 'User not found' });
+    res.json({ user: result.rows[0] });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
