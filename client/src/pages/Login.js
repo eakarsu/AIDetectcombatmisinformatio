@@ -26,8 +26,8 @@ export default function Login() {
   };
 
   const autoFill = () => {
-    setEmail('admin@factcheck.org');
-    setPassword('password123');
+    setEmail(process.env.REACT_APP_DEMO_EMAIL || '');
+    setPassword(process.env.REACT_APP_DEMO_PASSWORD || '');
   };
 
   return (
