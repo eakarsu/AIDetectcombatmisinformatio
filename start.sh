@@ -58,7 +58,7 @@ root="$(cd "$(dirname "$0")" && pwd)"
 test -f "$root/.env" || { echo 'Missing .env; copy .env.example and set secrets.' >&2; exit 1; }
 test -d "$root/server/node_modules" -a -d "$root/client/node_modules" || { echo 'Dependencies absent; run scripts/bootstrap.sh.' >&2; exit 1; }
 set -a; source "$root/.env"; set +a
-for port in "${BACKEND_PORT:-4000}" "${FRONTEND_PORT:-3000}"; do ! lsof -ti ":$port" >/dev/null 2>&1 || { echo "Port $port is in use; refusing to terminate it." >&2; exit 1; }; done
+for port in "${BACKEND_PORT:-4000}" "${FRONTEND_PORT:-3000}"; do ! lsof -tiTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1 || { echo "Port $port is in use; refusing to terminate it." >&2; exit 1; }; done
 if [[ "${MIGRATE_ON_START:-false}" == true ]]; then node "$root/server/scripts/migrate.js"; node "$root/server/scripts/provision-admin.js"; fi
 (cd "$root/server" && npm start) & server_pid=$!
 (cd "$root/client" && BROWSER=none PORT="${FRONTEND_PORT:-3000}" npm start) & client_pid=$!

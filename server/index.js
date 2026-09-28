@@ -19,6 +19,9 @@ const corsOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3000')
   .split(',')
   .map(s => s.trim())
   .filter(Boolean);
+if (process.env.NODE_ENV !== 'production') {
+  corsOrigins.push(`http://127.0.0.1:${PORT}`, `http://localhost:${PORT}`);
+}
 
 app.use(cors({
   origin: (origin, cb) => {
