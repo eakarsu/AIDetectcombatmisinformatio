@@ -1,3 +1,5 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
+import FormattedAIReport from "../components/FormattedAIReport";
 import React, { useState } from 'react';
 import api from '../services/api';
 
@@ -31,7 +33,7 @@ export default function AITrendPrediction() {
   const pred = result?.prediction;
 
   return (
-    <div>
+    <NativeAIControls busy={loading} context="Detectcombatmisinformatio"><div>
       <div className="page-header">
         <div>
           <h2>AI Trend Prediction</h2>
@@ -41,7 +43,7 @@ export default function AITrendPrediction() {
 
       <div className="ai-input-section">
         <h3>Forecast horizon (days)</h3>
-        <input
+        <input data-ai-field={"horizonDays"}
           type="number"
           min="1"
           max="30"
@@ -120,19 +122,7 @@ export default function AITrendPrediction() {
         </div>
       )}
 
-      {result && !pred && (
-        <div className="ai-result">
-          <div className="ai-result-header">
-            <div className="ai-icon">🤖</div>
-            <h4>AI Response</h4>
-          </div>
-          <div className="ai-field">
-            <div className="ai-field-value" style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
-              {JSON.stringify(result, null, 2)}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      {result && !pred && <FormattedAIReport response={result} title="Trend prediction response" />}
+    </div></NativeAIControls>
   );
 }

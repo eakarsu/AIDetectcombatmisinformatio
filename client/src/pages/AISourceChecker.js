@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import AIResultDisplay from '../components/AIResultDisplay';
@@ -35,7 +36,7 @@ export default function AISourceChecker() {
   };
 
   return (
-    <div>
+    <NativeAIControls busy={loading} context="Detectcombatmisinformatio"><div>
       <div className="page-header">
         <div><h2>AI Source Credibility Checker</h2><p className="subtitle">Evaluate the credibility and reliability of information sources</p></div>
       </div>
@@ -44,16 +45,16 @@ export default function AISourceChecker() {
         <div className="form-row" style={{ marginBottom: 12 }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label>Source Name *</label>
-            <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g., InfoWars, Reuters" />
+            <input data-ai-field={"name"} value={name} onChange={e => setName(e.target.value)} placeholder="e.g., InfoWars, Reuters" />
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label>URL</label>
-            <input value={url} onChange={e => setUrl(e.target.value)} placeholder="https://..." />
+            <input data-ai-field={"url"} data-ai-demo-safe type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder="https://example.com/source" />
           </div>
         </div>
         <div className="form-group">
           <label>Description (optional)</label>
-          <textarea value={description} onChange={e => setDescription(e.target.value)}
+          <textarea data-ai-field={"description"} value={description} onChange={e => setDescription(e.target.value)}
             placeholder="Any additional context about the source..." style={{ minHeight: 60 }} />
         </div>
         <button className="ai-btn" onClick={handleAnalyze} disabled={loading || !name.trim()}>
@@ -103,6 +104,6 @@ export default function AISourceChecker() {
           </div>
         </div>
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }

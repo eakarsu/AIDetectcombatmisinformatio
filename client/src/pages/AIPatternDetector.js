@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import AIResultDisplay from '../components/AIResultDisplay';
@@ -33,13 +34,13 @@ export default function AIPatternDetector() {
   };
 
   return (
-    <div>
+    <NativeAIControls busy={loading} context="Detectcombatmisinformatio"><div>
       <div className="page-header">
         <div><h2>AI Pattern Detector</h2><p className="subtitle">Detect misinformation patterns and manipulation techniques</p></div>
       </div>
       <div className="ai-input-section">
         <h3>Detect Misinformation Patterns</h3>
-        <textarea value={text} onChange={e => setText(e.target.value)}
+        <textarea data-ai-field={"text"} value={text} onChange={e => setText(e.target.value)}
           placeholder="Enter text to scan for misinformation patterns, e.g., 'Scientists are hiding the truth about vaccines because Big Pharma pays them millions...'" />
         <button className="ai-btn" onClick={handleAnalyze} disabled={loading || !text.trim()}>
           {loading ? <><span className="loading-spinner"></span> Detecting...</> : <>Detect Patterns</>}
@@ -87,6 +88,6 @@ export default function AIPatternDetector() {
           </div>
         </div>
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }

@@ -1,3 +1,5 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
+import FormattedAIReport from "../components/FormattedAIReport";
 import React, { useState } from 'react';
 import api from '../services/api';
 
@@ -40,7 +42,7 @@ export default function AIAutoCategorize() {
   const cat = result?.categorization;
 
   return (
-    <div>
+    <NativeAIControls busy={loading} context="Detectcombatmisinformatio"><div>
       <div className="page-header">
         <div>
           <h2>AI Auto-Categorize</h2>
@@ -50,14 +52,14 @@ export default function AIAutoCategorize() {
 
       <div className="ai-input-section">
         <h3>Claim to Categorize</h3>
-        <textarea
+        <textarea data-ai-field={"claimText"}
           value={claimText}
           onChange={(e) => setClaimText(e.target.value)}
           placeholder="e.g., 'Drinking warm lemon water every morning cures cancer.'"
         />
 
         <h3 style={{ marginTop: 16 }}>Available Categories (optional, comma-separated)</h3>
-        <textarea
+        <textarea data-ai-field={"categoriesInput"}
           value={categoriesInput}
           onChange={(e) => setCategoriesInput(e.target.value)}
           placeholder="health, politics, science, ..."
@@ -143,19 +145,7 @@ export default function AIAutoCategorize() {
         </div>
       )}
 
-      {result && !cat && (
-        <div className="ai-result">
-          <div className="ai-result-header">
-            <div className="ai-icon">🤖</div>
-            <h4>AI Response</h4>
-          </div>
-          <div className="ai-field">
-            <div className="ai-field-value" style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
-              {result.raw || JSON.stringify(result, null, 2)}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      {result && !cat && <FormattedAIReport response={result.raw || result} title="Categorization response" />}
+    </div></NativeAIControls>
   );
 }

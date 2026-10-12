@@ -1,4 +1,5 @@
 import React from 'react';
+import FormattedAIReport from './FormattedAIReport';
 
 function getVerdictClass(verdict) {
   if (!verdict) return '';
@@ -403,39 +404,6 @@ export default function AIResultDisplay({ result, type }) {
     );
   }
 
-  // Generic display for any other type
-  return (
-    <div className="ai-result">
-      <div className="ai-result-header">
-        <div className="ai-icon">🤖</div>
-        <h4>AI Analysis Result</h4>
-        <span className="model">Claude Haiku 4.5</span>
-      </div>
-      {Object.entries(result).map(([key, value]) => (
-        <div className="ai-field" key={key}>
-          <div className="ai-field-label">{key.replace(/_/g, ' ')}</div>
-          <div className="ai-field-value">
-            {typeof value === 'object' ? (
-              Array.isArray(value) ? (
-                <div className="ai-tags">
-                  {value.map((item, i) => (
-                    <span key={i} className="ai-tag">{typeof item === 'object' ? JSON.stringify(item) : String(item)}</span>
-                  ))}
-                </div>
-              ) : (
-                <div className="detail-grid">
-                  {Object.entries(value).map(([k, v]) => (
-                    <div key={k} className="detail-item">
-                      <div className="detail-label">{k.replace(/_/g, ' ')}</div>
-                      <div className="detail-value">{String(v)}</div>
-                    </div>
-                  ))}
-                </div>
-              )
-            ) : String(value)}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  // Generic structured display for any other type.
+  return <FormattedAIReport response={result} title="AI analysis result" />;
 }

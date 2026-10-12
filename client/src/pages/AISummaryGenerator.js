@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import AIResultDisplay from '../components/AIResultDisplay';
@@ -34,7 +35,7 @@ export default function AISummaryGenerator() {
   };
 
   return (
-    <div>
+    <NativeAIControls busy={loading} context="Detectcombatmisinformatio"><div>
       <div className="page-header">
         <div><h2>AI Summary Generator</h2><p className="subtitle">Generate professional fact-check summaries for public consumption</p></div>
       </div>
@@ -42,12 +43,12 @@ export default function AISummaryGenerator() {
         <h3>Generate Fact-Check Summary</h3>
         <div className="form-group">
           <label>Claim *</label>
-          <textarea value={claim} onChange={e => setClaim(e.target.value)}
+          <textarea data-ai-field={"claim"} value={claim} onChange={e => setClaim(e.target.value)}
             placeholder="Enter the claim that was fact-checked..." style={{ minHeight: 80 }} />
         </div>
         <div className="form-group">
           <label>Evidence (optional)</label>
-          <textarea value={evidence} onChange={e => setEvidence(e.target.value)}
+          <textarea data-ai-field={"evidence"} value={evidence} onChange={e => setEvidence(e.target.value)}
             placeholder="Enter any evidence or findings from the fact-check..." style={{ minHeight: 80 }} />
         </div>
         <button className="ai-btn" onClick={handleGenerate} disabled={loading || !claim.trim()}>
@@ -95,6 +96,6 @@ export default function AISummaryGenerator() {
           </div>
         </div>
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }

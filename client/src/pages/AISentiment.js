@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import AIResultDisplay from '../components/AIResultDisplay';
@@ -33,13 +34,13 @@ export default function AISentiment() {
   };
 
   return (
-    <div>
+    <NativeAIControls busy={loading} context="Detectcombatmisinformatio"><div>
       <div className="page-header">
         <div><h2>AI Sentiment Analysis</h2><p className="subtitle">Analyze emotional content and manipulation techniques in text</p></div>
       </div>
       <div className="ai-input-section">
         <h3>Analyze Sentiment</h3>
-        <textarea value={text} onChange={e => setText(e.target.value)}
+        <textarea data-ai-field={"text"} value={text} onChange={e => setText(e.target.value)}
           placeholder="Enter text to analyze for sentiment and manipulation indicators..." />
         <button className="ai-btn" onClick={handleAnalyze} disabled={loading || !text.trim()}>
           {loading ? <><span className="loading-spinner"></span> Analyzing...</> : <>Analyze Sentiment</>}
@@ -89,6 +90,6 @@ export default function AISentiment() {
           </div>
         </div>
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }

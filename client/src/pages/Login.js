@@ -26,8 +26,15 @@ export default function Login() {
   };
 
   const autoFill = () => {
-    setEmail(process.env.REACT_APP_DEMO_EMAIL || '');
-    setPassword(process.env.REACT_APP_DEMO_PASSWORD || '');
+    const demoEmail = process.env.REACT_APP_DEMO_EMAIL || '';
+    const demoPassword = process.env.REACT_APP_DEMO_PASSWORD || '';
+    if (!demoEmail || !demoPassword) {
+      setError('Demo credentials are unavailable. Configure the existing demo account for this deployment.');
+      return;
+    }
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setError('');
   };
 
   return (
@@ -51,8 +58,8 @@ export default function Login() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <button className="auto-fill-btn" onClick={autoFill}>
-          Auto Fill Demo Credentials
+        <button type="button" disabled={loading} className="auto-fill-btn" onClick={autoFill}>
+          Fill Demo Credentials
         </button>
       </div>
     </div>

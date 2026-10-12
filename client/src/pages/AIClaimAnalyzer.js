@@ -1,3 +1,4 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import AIResultDisplay from '../components/AIResultDisplay';
@@ -39,14 +40,14 @@ export default function AIClaimAnalyzer() {
   };
 
   return (
-    <div>
+    <NativeAIControls busy={loading} context="Detectcombatmisinformatio"><div>
       <div className="page-header">
         <div><h2>AI Claim Analyzer</h2><p className="subtitle">Use AI to analyze claims for factual accuracy</p></div>
       </div>
 
       <div className="ai-input-section">
         <h3>Analyze a Claim</h3>
-        <textarea
+        <textarea data-ai-field={"text"}
           value={text}
           onChange={e => setText(e.target.value)}
           placeholder="Enter a claim to analyze, e.g., 'Drinking warm lemon water every morning cures cancer'..."
@@ -101,6 +102,6 @@ export default function AIClaimAnalyzer() {
           </div>
         </div>
       )}
-    </div>
+    </div></NativeAIControls>
   );
 }

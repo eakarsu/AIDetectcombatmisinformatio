@@ -1,7 +1,10 @@
+import NativeAIControls from "../components/NativeAIControls.jsx";
+import FormattedAIReport from "../components/FormattedAIReport";
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 
 export default function AIPersonalizedDebunk() {
+  const [claims, setClaims] = useState([]);
   const [profiles, setProfiles] = useState([]);
   const [claimId, setClaimId] = useState('');
   const [profileId, setProfileId] = useState('');
@@ -10,7 +13,13 @@ export default function AIPersonalizedDebunk() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    api.get('/ai/audience-profiles').then((r) => setProfiles(r.data.profiles || [])).catch(() => {});
+    Promise.all([
+      api.get('/claims?page=1&limit=100'),
+      api.get('/ai/audience-profiles'),
+    ]).then(([claimsResponse, profilesResponse]) => {
+      setClaims(claimsResponse.data.data || []);
+      setProfiles(profilesResponse.data.profiles || []);
+    }).catch(() => {});
   }, []);
 
   const submit = async () => {
@@ -29,28 +38,28 @@ export default function AIPersonalizedDebunk() {
   };
 
   return (
-    <div>
+    <NativeAIControls busy={loading} context="Detectcombatmisinformatio"><div>
       <div className="page-header"><h2>Personalized Debunking</h2></div>
       <p className="subtitle">Generate a debunk tailored to an audience profile.</p>
       <div className="ai-input-section">
-        <input type="number" placeholder="claim id" value={claimId} onChange={(e) => setClaimId(e.target.value)} style={{ marginRight: 8 }} />
-        <select value={profileId} onChange={(e) => setProfileId(e.target.value)}>
-          <option value="">(generic audience)</option>
-          {profiles.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select>
-        <button className="ai-btn" onClick={submit} disabled={loading || !claimId} style={{ marginLeft: 8 }}>{loading ? 'Generating…' : 'Generate'}</button>
+        <div className="form-group">
+          <label htmlFor="personalized-debunk-claim">Claim *</label>
+          <select id="personalized-debunk-claim" data-ai-field="claimId" value={claimId} onChange={(e) => setClaimId(e.target.value)}>
+            <option value="">{claims.length ? 'Select a claim' : 'No claims available'}</option>
+            {claims.map((claim) => <option key={claim.id} value={claim.id}>{claim.title}</option>)}
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="personalized-debunk-profile">Audience profile (optional)</label>
+          <select id="personalized-debunk-profile" data-ai-field="profileId" value={profileId} onChange={(e) => setProfileId(e.target.value)}>
+            <option value="">Generic audience</option>
+            {profiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.name}</option>)}
+          </select>
+        </div>
+        <button className="ai-btn" onClick={submit} disabled={loading || !claimId}>{loading ? 'Generating…' : 'Generate'}</button>
       </div>
       {error && <div className="ai-result" style={{ borderColor: '#ef4444' }}><div className="ai-field"><div className="ai-field-value">{error}</div></div></div>}
-      {result?.debunk && (
-        <div className="ai-result">
-          {Object.entries(result.debunk).map(([k, v]) => (
-            <div className="ai-field" key={k}>
-              <div className="ai-field-label">{k}</div>
-              <div className="ai-field-value">{Array.isArray(v) ? <ul>{v.map((x, i) => <li key={i}>{x}</li>)}</ul> : String(v)}</div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+      {result?.debunk && <FormattedAIReport response={result.debunk} title="Personalized debunk" />}
+    </div></NativeAIControls>
   );
 }
