@@ -1,3 +1,4 @@
+import DetailModal from '../components/DetailModal';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
@@ -6,6 +7,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [recentClaims, setRecentClaims] = useState([]);
   const [activeAlerts, setActiveAlerts] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,7 +80,7 @@ export default function Dashboard() {
             </thead>
             <tbody>
               {recentClaims.map(claim => (
-                <tr key={claim.id} onClick={() => navigate('/claims')}>
+                <tr key={claim.id} onClick={() => setSelectedItem(claim)} style={{ cursor: 'pointer' }}>
                   <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{claim.title}</td>
                   <td><span className={`badge badge-${claim.priority}`}>{claim.priority}</span></td>
                   <td><span className={`badge badge-${claim.status}`}>{claim.status.replace('_', ' ')}</span></td>
@@ -103,7 +105,7 @@ export default function Dashboard() {
             </thead>
             <tbody>
               {activeAlerts.map(alert => (
-                <tr key={alert.id} onClick={() => navigate('/alerts')}>
+                <tr key={alert.id} onClick={() => setSelectedItem(alert)} style={{ cursor: 'pointer' }}>
                   <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{alert.title}</td>
                   <td><span className={`badge badge-${alert.severity}`}>{alert.severity}</span></td>
                   <td>{alert.source}</td>
@@ -113,6 +115,7 @@ export default function Dashboard() {
           </table>
         </div>
       </div>
+      <DetailModal title={selectedItem?.title || 'Record Details'} item={selectedItem} onClose={() => setSelectedItem(null)} onEdit={() => { const isClaim = selectedItem?.priority !== undefined; setSelectedItem(null); navigate(isClaim ? '/claims' : '/alerts'); }} onDelete={() => setSelectedItem(null)} />
     </div>
   );
 }

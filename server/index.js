@@ -61,6 +61,7 @@ app.use('/api/ai', require('./routes/viralEarlyWarn'));
 app.use('/api/public', require('./routes/publicWidget'));
 app.use('/api/narrative-cluster-attribution', require('./routes/narrativeClusterAttribution'));
 app.use('/api/evidence-cases', require('./routes/evidenceCases'));
+app.use('/api/feature-pack', require('./routes/featurePack').createFeaturePackRouter({ queryFn:(t,p)=>require('./db').query(t,p), authenticate:require('./middleware/auth'), table:'claims' }));
 
 // Health check
 app.get('/api/health', (req, res) => {
